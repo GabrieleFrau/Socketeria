@@ -2,13 +2,13 @@ socketeria
 ==========
 c++ crossplatform socket
 
-DEPENDENCIES
+Dependencies
 =========
 Any compiler that supports gnu++11/c++11
 CMAKE and MAKE for compiling
 Doxygen for creating the documentation
 
-COMPILING
+Compiling
 =========
 
 mkdir build
