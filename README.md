@@ -18,5 +18,5 @@ make
 * Parse function for host names and service names
 * Comment everything catch(CommentsOverFlowException e){morecomments();}
 * Fix horrible error handling
-* Remove UN33X & W33nd4wZ H4XX if possible or wrap the function as needed
+* Remove UN33X & W33nd4wZ H4XX if possible or wrap the functions as needed
 * Moar things
