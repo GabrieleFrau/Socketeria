@@ -19,8 +19,8 @@ find_package(Doxygen)
 if (DOXYGEN_FOUND AND SOCKETERIA_BUILD_DOCS)
 	add_subdirectory(docs)
 	configure_file(
-	${SOCKETERIA_SOURCE_DIR}/docs/Doxyfile.in
-    ${SOCKETERIA_BINARY_DIR}/docs/Doxyfile @ONLY
+	"${SOCKETERIA_SOURCE_DIR}/docs/Doxyfile.in"
+    "${SOCKETERIA_BINARY_DIR}/docs/Doxyfile" @ONLY
 )
 endif()
 
