@@ -51,7 +51,7 @@ PROJECT_BRIEF          = "c++ crossplatform socket"
 # and the maximum width should not exceed 200 pixels. Doxygen will copy the logo
 # to the output directory.
 
-PROJECT_LOGO           = /home/strelok/Socketeria/logo_medium.png
+PROJECT_LOGO           = "@PROJECT_SOURCE_DIR@/logo_medium.png"
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
@@ -753,7 +753,7 @@ WARN_LOGFILE           =
 # spaces.
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = /home/strelok/Socketeria/xsocket
+INPUT                  = "@PROJECT_SOURCE_DIR@/xsocket"
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
