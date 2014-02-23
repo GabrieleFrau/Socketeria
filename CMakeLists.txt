@@ -19,14 +19,14 @@ find_package(Doxygen)
 if (DOXYGEN_FOUND AND SOCKETERIA_BUILD_DOCS)
 	add_subdirectory(docs)
 	configure_file(
-	"${SOCKETERIA_SOURCE_DIR}/docs/Doxyfile.in"
-    "${SOCKETERIA_BINARY_DIR}/docs/Doxyfile" @ONLY
+	"${PROJECT_SOURCE_DIR}/docs/Doxyfile.in"
+    "${PROJECT_BINARY_DIR}/docs/Doxyfile" @ONLY
 )
 endif()
 
 add_subdirectory (xsocket)
 
-include_directories (${PROJECT_BINARY_DIR})
+include_directories ("${PROJECT_BINARY_DIR}")
 include_directories ("${PROJECT_SOURCE_DIR}/xsocket")
 
 link_directories ("${PROJECT_BINARY_DIR}/xsocket")
