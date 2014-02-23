@@ -33,3 +33,6 @@ link_directories ("${PROJECT_BINARY_DIR}/xsocket")
 
 add_executable (socketeria main.cpp)
 target_link_libraries (socketeria xsocket)
+if(WIN32)
+  target_link_libraries(socketeria wsock32 ws2_32)
+endif()
