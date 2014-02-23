@@ -1,12 +1,13 @@
-# Socketeria
-C++ crossplatform socket (tested on windows 8 and GNU\linux)
+Socketeria
+==========
+C++ crossplatform socket (tested on windows 8 and GNU/linux)
 
-## Dependencies
+# Dependencies
 * Any compiler that supports gnu++11/c++11 (Tested on GCC>=4.7 and MinGW)
 * CMAKE and MAKE for compiling (>=2.6)
 * Doxygen for creating the documentation (>=1.8.6)
 
-## Compiling
+# Compiling
 
 ```bash
 mkdir build
