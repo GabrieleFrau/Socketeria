@@ -23,7 +23,7 @@ TCPsenderInfo* SocketTCP::Accept()
 }
 SOCKET SocketTCP::Connect(addr_IPvX* _addr, socklen_t _addrlen)
 {
-    int so = socket((int)m_family,(int)m_type,0);
+    SOCKET so = socket((int)m_family,(int)m_type,0);
     if(so == INVALID_SOCKET)
         throw strerror(errno);
     if(connect(so, _addr , _addrlen))

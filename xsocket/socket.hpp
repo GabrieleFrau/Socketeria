@@ -7,7 +7,9 @@
 #include <vector>
 #include <cstdio>
 #include <cstring>
+#ifdef __unix__
 #include <unistd.h>
+#endif
 using namespace nSocket;
 using namespace nAddress;
 using namespace std;

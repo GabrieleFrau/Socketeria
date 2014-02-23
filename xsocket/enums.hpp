@@ -9,8 +9,8 @@
 		#undef WINVER
 		#undef _WIN32_WINNT
 		#undef NTDDI_VERSION
-		#define NTDDI_VERSION NTDDI_VISTASP2
-		#define WINVER _WIN32_WINNT_VISTASP2
+		#define NTDDI_VERSION NTDDI_VISTA
+		#define WINVER _WIN32_WINNT_VISTA
 		#define _WIN32_WINNT _WIN32_WINNT_VISTA
 #include <winsock2.h>
 #include <ws2tcpip.h>

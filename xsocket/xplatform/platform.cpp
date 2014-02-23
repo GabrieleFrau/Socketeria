@@ -3,7 +3,12 @@
 
 void Platform::ShowCompilerInfo()
 {
+#ifdef __GNUC__
     const char* version = __VERSION__;
+#endif
+#ifdef _MSC_VER
+	const int version = _MSC_VER;
+#endif
     const char* data = __DATE__;
     const char* time = __TIME__;
     const int standard = __cplusplus;

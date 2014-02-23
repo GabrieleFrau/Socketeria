@@ -77,7 +77,12 @@ void Socket::Bind(addr_IPvX* _addr,int _addrlen)
 void Socket::Close()
 {
     if(m_sockId != INVALID_SOCKET)
+#ifdef __unix__
         close(m_sockId);
+#endif
+#ifdef _WIN32
+		closesocket(m_sockId);
+#endif
 }
 void Socket::Create(Family _family, Type _type)
 {
@@ -171,7 +176,12 @@ bool Socket::IsBound()
 string Socket::GetIP(addr_IPvX* _address)
 {
     long unsigned int length = (_address->sa_family == AF_INET) ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN;
+#ifdef __GNUC__
     char ip[(int)length];
+#endif
+#ifdef _MSC_VER
+	char ip[INET_ADDRSTRLEN]; //can only use constant expression (lame) NEEDS A WORKAROUND
+#endif
 #ifdef ISUNIX
     inet_ntop(_address->sa_family,_address->sa_data,ip,length);
 #endif

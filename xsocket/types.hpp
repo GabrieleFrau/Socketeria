@@ -5,7 +5,6 @@
 typedef int SOCKET;
 #endif
 #ifdef ISWINZ
-typedef unsigned int SOCKET;
 typedef int socklen_t;
 typedef int in_port_t;
 #endif
@@ -24,7 +23,7 @@ typedef struct sTCPSenderInfo
 {
     addr_storage* sender;
     socklen_t senderlen;
-    int id;
+    SOCKET id;
 }TCPsenderInfo;
 typedef struct sNPAddrInfo
 {
