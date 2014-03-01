@@ -7,7 +7,7 @@
 #include <vector>
 #include <cstdio>
 #include <cstring>
-#ifdef __unix__
+#if defined(__unix__) || defined(__APPLE__)
 #include <unistd.h>
 #endif
 using namespace nSocket;

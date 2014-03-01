@@ -1,7 +1,6 @@
 #ifndef XSOCKET_DEFINES_HPP_INCLUDED
 #define XSCOKET_DEFINES_HPP_INCLUDED
-    #ifdef __unix__
-        #define ISUNIX
+    #if defined(__APPLE__) || defined(__unix__)
         #define SOCKET_ERROR -1
         #define INVALID_SOCKET -1
     #endif

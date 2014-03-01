@@ -57,12 +57,13 @@ void Socket::Bind(addr_IPvX* _addr,int _addrlen)
         throw "Socket is not valid";
     else
     {
+#if defined(_WIN32) || defined(__unix__)
         if(bind(m_sockId,_addr,_addrlen) == SOCKET_ERROR)
         {
 #ifdef ISWINZ
             throw Platform::ShowError(WSAGetLastError());
 #endif
-#ifdef ISUNIX
+#if defined(__unix__) || defined(__APPLE__)
             throw strerror(errno);
 #endif
             m_isBound = false;
@@ -72,12 +73,13 @@ void Socket::Bind(addr_IPvX* _addr,int _addrlen)
             m_isBound = true;
             clog<<"Socket bound to "<<GetIP(_addr)<<" "<<GetPort(_addr)<<endl;
         }
+#endif
     }
 }
 void Socket::Close()
 {
     if(m_sockId != INVALID_SOCKET)
-#ifdef __unix__
+#if defined(__unix__) || defined(__APPLE__)
         close(m_sockId);
 #endif
 #ifdef _WIN32
@@ -99,7 +101,7 @@ void Socket::Create()
 #ifdef ISWINZ
         throw Platform::ShowError(WSAGetLastError());
 #endif
-#ifdef ISUNIX
+#if defined(__unix__) || defined(__APPLE__)
         throw strerror(errno);
 #endif
     }
@@ -122,13 +124,13 @@ vector<npAddrInfo> Socket::GetAddresses(string _ip, int _port, Type _type, Proto
     memset(&myAddrSpecs, 0, sizeof(myAddrSpecs));
     myAddrSpecs.ai_family = (int)_family;
     myAddrSpecs.ai_socktype = (int)_type;
-    #ifdef _unix_
+    #if defined(__unix__) || defined(__APPLE__)
     myAddrSpecs.ai_flags = AI_V4MAPPED | AI_ADDRCONFIG;
     #endif
     if(_ip.empty())
         myAddrSpecs.ai_flags |= AI_PASSIVE;
     myAddrSpecs.ai_protocol = (int)_protocol;
-#ifdef ISUNIX
+#if defined(__unix__) || defined(__APPLE__)
     const char* port = ::to_string(_port).c_str();
 #endif
 #ifdef ISWINZ
@@ -138,7 +140,7 @@ vector<npAddrInfo> Socket::GetAddresses(string _ip, int _port, Type _type, Proto
                         ?   ((char*)nullptr)    //if
                         :   (_ip.c_str());      //else
     int n = getaddrinfo(ip, port , &myAddrSpecs, &myAddrInfo);
-#ifdef ISUNIX
+#if defined(__unix__) || defined(__APPLE__)
     if(n < 0)
 #endif
 #ifdef ISWINZ
@@ -182,7 +184,7 @@ string Socket::GetIP(addr_IPvX* _address)
 #ifdef _MSC_VER
 	char ip[INET_ADDRSTRLEN]; //can only use constant expression (lame) NEEDS A WORKAROUND
 #endif
-#ifdef ISUNIX
+#if defined(__unix__) || defined(__APPLE__)
     inet_ntop(_address->sa_family,_address->sa_data,ip,length);
 #endif
 #ifdef ISWINZ
@@ -229,7 +231,7 @@ void Socket::ShutDown()
                 if(closesocket(m_sockId) == SOCKET_ERROR)
                     throw WSAGetLastError();
 #endif
-#ifdef ISUNIX
+#if defined(__unix__) || defined(__APPLE__)
                 clog<<"shutdown: "<<strerror(errno)<<endl;
                 if(close(m_sockId))
                     throw strerror(errno);

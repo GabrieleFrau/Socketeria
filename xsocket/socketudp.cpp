@@ -42,7 +42,7 @@ void SocketUDP::Send(string _buffer, addr_storage* _receiver)
     const char* buffer = _buffer.c_str();
     size_t bufferlen = _buffer.length() + 1;
     socklen_t recvlen = sizeof(addr_storage);
-#ifdef ISUNIX
+#if defined(__unix__) || defined(__APPLE__)
     ssize_t n;
 #endif
 #ifdef ISWINZ
@@ -51,7 +51,7 @@ void SocketUDP::Send(string _buffer, addr_storage* _receiver)
     n = sendto(m_sockId, buffer,bufferlen,0,(addr_IPvX*)_receiver,recvlen);
     if(n == SOCKET_ERROR)
     {
-#ifdef ISUNIX
+#if defined(__unix__) || defined(__APPLE__)
         throw strerror(errno);
 #endif
 #ifdef ISWINZ

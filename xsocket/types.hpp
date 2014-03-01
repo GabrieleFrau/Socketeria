@@ -1,8 +1,11 @@
 #ifndef SOCKET_TYPES_HPP_INCLUDED
 #define SOCKET_TYPES_HPP_INCLUDED
 #include "defines.hpp"
-#ifdef ISUNIX
+#if defined(__unix__) || defined(__APPLE__)
 typedef int SOCKET;
+#endif
+#ifdef __APPLE__
+    #include    <netdb.h>
 #endif
 #ifdef ISWINZ
 typedef int socklen_t;
@@ -32,7 +35,7 @@ typedef struct sNPAddrInfo
 	int ai_socktype;
 	int ai_protocol;
 	socklen_t ai_addrlen;
-	#ifdef ISUNIX
+	#if defined(__unix__) || defined(__APPLE__)
 	struct sockaddr *ai_addr;
 	char* ai_canonname;
 	#endif

@@ -13,7 +13,7 @@ TCPsenderInfo* SocketTCP::Accept()
     ret->senderlen = (socklen_t)sizeof(addr_storage);
     ret->id = accept(m_sockId,(addr_IPvX*)ret->sender,&ret->senderlen);
     if(ret->id == SOCKET_ERROR)
-#ifdef ISUNIX
+#if defined(__unix__) || defined(__APPLE__)
             throw strerror(errno);
 #endif
 #ifdef ISWINZ
@@ -47,7 +47,7 @@ void SocketTCP::Listen()
 #ifdef ISWINZ
         throw Platform::ShowError(WSAGetLastError());
 #endif
-#ifdef ISUNIX
+#if defined(__unix__) || defined(__APPLE__)
         throw strerror(errno);
 #endif
 }
@@ -61,7 +61,7 @@ string SocketTCP::Receive(SOCKET _sockID)
     n = recv(_sockID, buffer, BUFFER_PACKET_MAX_SIZE, 0);
     if(n == SOCKET_ERROR)
     {
-#ifdef ISUNIX
+#if defined(__unix__) || defined(__APPLE__)
         throw strerror(errno);
 #endif
 #ifdef ISWINZ
@@ -78,7 +78,7 @@ void SocketTCP::Send(SOCKET _sockID, string _buffer)
 {
     const char* buffer = _buffer.c_str();
     size_t bufferlen = _buffer.length();
-#ifdef ISUNIX
+#if defined(__unix__) || defined(__APPLE__)
     ssize_t n;
 #endif
 #ifdef ISWINZ
@@ -87,7 +87,7 @@ void SocketTCP::Send(SOCKET _sockID, string _buffer)
     n = send(_sockID,buffer,bufferlen, 0);
     if(n == SOCKET_ERROR)
     {
-#ifdef ISUNIX
+#if defined(__unix__) || defined(__APPLE__)
         throw strerror(errno);
 #endif
 #ifdef ISWINZ

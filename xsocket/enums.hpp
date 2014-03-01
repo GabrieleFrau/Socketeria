@@ -1,9 +1,9 @@
 #ifndef XSOCKET_ENUMS_HPP_INCLUDED
 #define XSOCKET_ENUMS_HPP_INCLUDED
-#ifdef __unix__
+#if defined(__APPLE__) || defined(__unix__)
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <netdb.h>
 #endif
 #ifdef _WIN32
 		#undef WINVER
@@ -12,8 +12,8 @@
 		#define NTDDI_VERSION NTDDI_VISTA
 		#define WINVER _WIN32_WINNT_VISTA
 		#define _WIN32_WINNT _WIN32_WINNT_VISTA
-#include <winsock2.h>
-#include <ws2tcpip.h>
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
 #endif
 namespace nSocket
 {
