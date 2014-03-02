@@ -60,7 +60,7 @@ void Socket::Bind(addr_IPvX* _addr,int _addrlen)
 #if defined(_WIN32) || defined(__unix__)
         if(bind(m_sockId,_addr,_addrlen) == SOCKET_ERROR)
         {
-#ifdef ISWINZ
+#ifdef _WIN32
             throw Platform::ShowError(WSAGetLastError());
 #endif
 #if defined(__unix__) || defined(__APPLE__)
@@ -73,6 +73,9 @@ void Socket::Bind(addr_IPvX* _addr,int _addrlen)
             m_isBound = true;
             clog<<"Socket bound to "<<GetIP(_addr)<<" "<<GetPort(_addr)<<endl;
         }
+#endif
+#ifdef __APPLE__
+		bind(m_sockId, _addr, _addrlen);
 #endif
     }
 }
