@@ -2,7 +2,7 @@
 
 Socket::Socket(Family _family, Type _type, Protocol _protocol)
 {
-#ifdef ISWINZ
+#ifdef _WIN32
     InitWSA();
 #endif
     m_family = _family;
@@ -36,7 +36,7 @@ Socket::Socket(string _ip, int _port,Type _type, Protocol _protocol, Family _fam
 }
 Socket::~Socket()
 {
-#ifdef ISWINZ
+#ifdef _WIN32
     if(m_isWsaStarted)
     {
         if(WSACleanup())
@@ -101,7 +101,7 @@ void Socket::Create()
     m_sockId = socket((int)m_family,(int)m_type, 0);
     if(m_sockId == INVALID_SOCKET)
     {
-#ifdef ISWINZ
+#ifdef _WIN32
         throw Platform::ShowError(WSAGetLastError());
 #endif
 #if defined(__unix__) || defined(__APPLE__)
@@ -139,7 +139,7 @@ vector<npAddrInfo> Socket::GetAddresses(string _ip, int _port, Type _type, Proto
 #ifdef _WIN32
 	#ifdef __MINGW32__
 		const char* port = Platform::to_string(_port).c_str();
-	#else
+	#elif defined(_MSC_VER)
 		char port[20] = { '\0' };
 		_itoa(_port, port, 10);
 	#endif
@@ -151,12 +151,12 @@ vector<npAddrInfo> Socket::GetAddresses(string _ip, int _port, Type _type, Proto
 #if defined(__unix__) || defined(__APPLE__)
     if(n < 0)
 #endif
-#ifdef ISWINZ
+#ifdef _WIN32
     if(n != 0)
 #endif
     {
         throw gai_strerror(n);
-        #ifdef ISWINZ
+        #ifdef _WIN32
         throw Platform::ShowError(WSAGetLastError());
         #endif
     }
@@ -195,7 +195,7 @@ string Socket::GetIP(addr_IPvX* _address)
 #if defined(__unix__) || defined(__APPLE__)
     inet_ntop(_address->sa_family,_address->sa_data,ip,length);
 #endif
-#ifdef ISWINZ
+#ifdef _WIN32
     if(WSAAddressToString(_address,length,NULL,ip,&length) == SOCKET_ERROR)
         cerr<<"Address to string: "<<Platform::ShowError(WSAGetLastError())<<::endl;
 #endif
@@ -234,7 +234,7 @@ void Socket::ShutDown()
         {
             if(shutdown(m_sockId,2) == -1)
             {
-#ifdef ISWINZ
+#ifdef _WIN32
                 clog<<"shutdown: "<<WSAGetLastError()<<endl;
                 if(closesocket(m_sockId) == SOCKET_ERROR)
                     throw WSAGetLastError();
@@ -247,7 +247,7 @@ void Socket::ShutDown()
             }
         }
 }
-#ifdef ISWINZ
+#ifdef _WIN32
 void Socket::InitWSA()
 {
     WORD wVersionRequested = MAKEWORD(2,2);
