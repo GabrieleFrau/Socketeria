@@ -108,7 +108,7 @@ void Socket::Create()
         throw strerror(errno);
 #endif
     }
-    #ifdef _unix_
+    #ifdef __unix__
     int optval = 1;
     if(setsockopt(m_sockId, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)))
         throw strerror(errno);
