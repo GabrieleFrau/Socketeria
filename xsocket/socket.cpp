@@ -136,9 +136,14 @@ vector<npAddrInfo> Socket::GetAddresses(string _ip, int _port, Type _type, Proto
 #if defined(__unix__) || defined(__APPLE__)
     const char* port = ::to_string(_port).c_str();
 #endif
-#ifdef ISWINZ
-    const char* port = Platform::to_string(_port).c_str();
-#endif // to_string is not supported for some reason
+#ifdef _WIN32
+	#ifdef __MINGW32__
+		const char* port = Platform::to_string(_port).c_str();
+	#else
+		char port[20] = { '\0' };
+		_itoa(_port, port, 10);
+	#endif
+#endif
     const char* ip = (_ip.empty())
                         ?   ((char*)nullptr)    //if
                         :   (_ip.c_str());      //else
