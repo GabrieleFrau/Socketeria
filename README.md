@@ -1,9 +1,9 @@
 Socketeria
 ==========
-C++ crossplatform socket (tested on windows 8 and GNU/linux)
+C++ crossplatform socket (tested on windows 8, GNU/linux and MacOSX 10.9)
 
 # Dependencies
-* Any compiler that supports gnu++11/c++11 (Tested on GCC>=4.7 and MinGW)
+* Any compiler that supports gnu++11/c++11 (Tested on GCC>=4.7, MinGW>=4.7, Clang and MSVC compiler v18)
 * CMAKE and MAKE for compiling (>=2.6)
 * Doxygen for creating the documentation (>=1.8.6)
 
