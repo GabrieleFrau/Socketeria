@@ -2,7 +2,7 @@
 #define SOCKET_TYPES_HPP_INCLUDED
 #include "defines.hpp"
 #if defined(__unix__) || defined(__APPLE__)
-#include <netdb.h>	 
+#include <netdb.h>	// 
     typedef int SOCKET;
 #endif
 #ifdef _WIN32

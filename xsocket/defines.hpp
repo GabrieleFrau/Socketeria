@@ -5,7 +5,6 @@
         #define INVALID_SOCKET -1
     #endif
     #ifdef _WIN32
-        #define ISWINZ
 		#undef UNICODE
     #endif
         #define BUFFER_SIZE 4096
