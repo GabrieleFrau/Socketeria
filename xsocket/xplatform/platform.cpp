@@ -18,7 +18,7 @@ void Platform::ShowCompilerInfo()
                         <<"\tC++ Standard: "<<standard<<std::endl
 						<<std::endl;
 }
-#ifdef ISWINZ
+#ifdef _WIN32
 std::string Platform::to_string(int value)
 {
     std::stringstream ss;

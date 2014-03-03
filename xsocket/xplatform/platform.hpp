@@ -8,7 +8,6 @@
 typedef struct utsname UnixInfo;
 #endif
 #ifdef _WIN32
-#define ISWINZ
 #include <string>
 #include <sstream>
 #include <windows.h> ///< \bug You have to manually edit #include from <winsock.h> to <winsock2.h>
@@ -17,7 +16,7 @@ class Platform
 {
 public:
     static void ShowCompilerInfo();
-#ifdef ISWINZ
+#ifdef _WIN32
     static std::string ShowError(HRESULT hresult);
     static std::string to_string(int value);
 #endif
