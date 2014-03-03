@@ -2,12 +2,10 @@
 #define SOCKET_TYPES_HPP_INCLUDED
 #include "defines.hpp"
 #if defined(__unix__) || defined(__APPLE__)
-typedef int SOCKET;
+#include <netdb.h>
+    typedef int SOCKET;
 #endif
-#ifdef __APPLE__
-    #include    <netdb.h>
-#endif
-#ifdef ISWINZ
+#ifdef _WIN32
 typedef int socklen_t;
 typedef int in_port_t;
 #endif
