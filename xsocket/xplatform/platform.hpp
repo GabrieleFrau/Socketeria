@@ -2,7 +2,6 @@
 #define PLATFORM_HPP_INCLUDED
 #include <iostream>
 #ifdef __unix__
-#define ISUNIX
 #include <sys/utsname.h>
 #include <cstring>
 typedef struct utsname UnixInfo;
