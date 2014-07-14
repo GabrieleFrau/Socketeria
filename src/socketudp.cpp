@@ -15,26 +15,28 @@ UDPsenderInfo SocketUDP::Receive()
     char buffer[BUFFER_SIZE];
     memset(buffer,'\0',BUFFER_SIZE);
     UDPsenderInfo ret;
-    if(&ret != NULL)
-        ret.sender = new sockaddr_storage();
-    int n;
-	clog << "Awaiting data" << endl;
-	socklen_t senderlen = (ret.sender->ss_family == AF_INET) ? sizeof(addr_IPv4) : sizeof(addr_IPv6);
-	n = recvfrom(m_sockId, buffer, BUFFER_PACKET_MAX_SIZE, 0, (addr_IPvX*)ret.sender, &senderlen);
-    if(n == SOCKET_ERROR)
-    {
+    ret.sender = new sockaddr_storage();
+	if (ret.sender != NULL)
+	{
+		int n;
+		clog << "Awaiting data" << endl;
+		socklen_t senderlen = (ret.sender->ss_family == AF_INET) ? sizeof(addr_IPv4) : sizeof(addr_IPv6);
+		n = recvfrom(m_sockId, buffer, BUFFER_PACKET_MAX_SIZE, 0, (addr_IPvX*)ret.sender, &senderlen);
+		if (n == SOCKET_ERROR)
+		{
 #ifdef ISUNIX
-        throw strerror(errno);
+			throw strerror(errno);
 #endif
 #ifdef _WIN32
-        std::cerr<<"errore";
+			std::cerr << "errore";
 #endif
-    }
-    else
-    {
-        clog<<"Data received"<<endl;
-        ret.buffer.assign(buffer);
-    }
+		}
+		else
+		{
+			clog << "Data received" << endl;
+			ret.buffer.assign(buffer);
+		}
+	}
     return ret;
 }
 void SocketUDP::Send(string _buffer, addr_storage* _receiver)
