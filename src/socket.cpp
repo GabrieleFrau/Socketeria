@@ -40,7 +40,7 @@ Socket::~Socket()
     if(m_isWsaStarted)
     {
         if(WSACleanup())
-            throw Platform::ShowError(WSAGetLastError());
+            std::cerr<<"errore";
         else
             m_isWsaStarted = false;
     }
@@ -61,7 +61,7 @@ void Socket::Bind(addr_IPvX* _addr,int _addrlen)
         if(bind(m_sockId,_addr,_addrlen) == SOCKET_ERROR)
         {
 #ifdef _WIN32
-            throw Platform::ShowError(WSAGetLastError());
+            std::cerr<<"errore";
 #endif
 #if defined(__unix__) || defined(__APPLE__)
             throw strerror(errno);
@@ -71,7 +71,7 @@ void Socket::Bind(addr_IPvX* _addr,int _addrlen)
         else
         {
             m_isBound = true;
-            clog<<"Socket bound to "<<GetIP(_addr)<<" "<<GetPort(_addr)<<endl;
+			//clog << "Socket bound to " << GetIP(_addr) << " " << GetPort(_addr) << endl;
         }
 #endif
 #ifdef __APPLE__
@@ -102,7 +102,7 @@ void Socket::Create()
     if(m_sockId == INVALID_SOCKET)
     {
 #ifdef _WIN32
-        throw Platform::ShowError(WSAGetLastError());
+        std::cerr<<"errore";
 #endif
 #if defined(__unix__) || defined(__APPLE__)
         throw strerror(errno);
@@ -116,7 +116,7 @@ void Socket::Create()
     #ifdef _WIN32
     const char* optval = "true";
     if(setsockopt(m_sockId, SOL_SOCKET, SO_REUSEADDR, optval, sizeof(optval)))
-        throw Platform::ShowError(WSAGetLastError());
+        std::cerr<<"errore";
     #endif
 }
 vector<npAddrInfo> Socket::GetAddresses(string _ip, int _port, Type _type, Protocol _protocol, Family _family)
@@ -141,7 +141,7 @@ vector<npAddrInfo> Socket::GetAddresses(string _ip, int _port, Type _type, Proto
 		const char* port = Platform::to_string(_port).c_str();
 	#elif defined(_MSC_VER)
 		char port[20] = { '\0' };
-		_itoa(_port, port, 10);
+		_itoa_s(_port, port, 10);
 	#endif
 #endif
     const char* ip = (_ip.empty())
@@ -157,7 +157,7 @@ vector<npAddrInfo> Socket::GetAddresses(string _ip, int _port, Type _type, Proto
     {
         throw gai_strerror(n);
         #ifdef _WIN32
-        throw Platform::ShowError(WSAGetLastError());
+        std::cerr<<"errore";
         #endif
     }
     else
@@ -196,12 +196,13 @@ string Socket::GetIP(addr_IPvX* _address)
     inet_ntop(_address->sa_family,_address->sa_data,ip,length);
 #endif
 #ifdef _WIN32
-    if(WSAAddressToString(_address,length,NULL,ip,&length) == SOCKET_ERROR)
-        cerr<<"Address to string: "<<Platform::ShowError(WSAGetLastError())<<::endl;
+	if (WSAAddressToString(_address, length, NULL, ip, &length) == SOCKET_ERROR)
+		cerr << "Address to string: ";// << Platform::ShowError(WSAGetLastError()) << ::endl;
 #endif
     if(ip == NULL)
     {
-        cerr<<"inet_ntop: "<<strerror(errno)<<::endl;
+		char tmp[256];
+        cerr<<"inet_ntop: "<<strerror_s(tmp,errno)<<::endl;
         exit(errno);
     }
     return string(ip);
@@ -253,8 +254,11 @@ void Socket::InitWSA()
     WORD wVersionRequested = MAKEWORD(2,2);
     WSADATA wsaData;
     int wsastartup = WSAStartup(wVersionRequested, &wsaData);
-    if (wsastartup != NO_ERROR)
-        throw strerror(errno);
+	if (wsastartup != NO_ERROR)
+	{
+		char tmp[256];
+		throw strerror_s(tmp,errno);
+	}
     else m_isWsaStarted = true;
 }
 #endif

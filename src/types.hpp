@@ -37,7 +37,7 @@ typedef struct sNPAddrInfo
 	struct sockaddr *ai_addr;
 	char* ai_canonname;
 	#endif
-	#ifdef ISWINZ
+	#ifdef _WIN32
 	char* ai_canonname;
 	struct sockaddr *ai_addr;
 	#endif //idiots

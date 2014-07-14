@@ -1,25 +1,11 @@
 cmake_minimum_required (VERSION 2.6)
-project (Socketeria)
+project (Socketeria CXX)
 
-set (SOCKETERIA_VERSION_MAJOR 0)
-set (SOCKETERIA_VERSION_MINOR 5)
-set	(SOCKETERIA_VERSION_PATCH 0)
-set	(SOCKETERIA_VERSION_EXTRA 0)
-set	(SOCKETERIA_VERSION "${SOCKETERIA_VERSION_MAJOR}.${SOCKETERIA_VERSION_MINOR}")
-set	(SOCKETERIA_VERSION_FULL "${SOCKETERIA_VERSION}_${SOCKETERIA_VERSION_PATCH}")
-set 	(CMAKE_BUILD_TYPE Debug)
-if(NOT MSVC)
-	set	(CMAKE_CXX_FLAGS_DEBUG -std=c++11)
-else()
-	set (CMAKE_CXX_FLAGS_DEBUG "/D_CRT_SECURE_NO_WARNINGS")
-endif()
 option (SOCKETERIA_BUILD_DOCS "use doxygen to build the project documentation" OFF)
+option (SOCKETERIA_BUILD_EXAMPLE "build a test program to try the lib out" ON)
 
-configure_file (
-  "${PROJECT_SOURCE_DIR}/socketeriaConfig.h.in"
-  "${PROJECT_BINARY_DIR}/socketeriaConfig.h"
-)
 find_package(Doxygen)
+
 if (DOXYGEN_FOUND AND SOCKETERIA_BUILD_DOCS)
 	add_subdirectory(docs)
 	configure_file(
@@ -28,15 +14,34 @@ if (DOXYGEN_FOUND AND SOCKETERIA_BUILD_DOCS)
 )
 endif()
 
-add_subdirectory (xsocket)
+include_directories("${PROJECT_SOURCE_DIR}/src")
 
-include_directories ("${PROJECT_BINARY_DIR}")
-include_directories ("${PROJECT_SOURCE_DIR}/xsocket")
+set(SOURCES
+	${PROJECT_SOURCE_DIR}/src/socket.cpp
+	${PROJECT_SOURCE_DIR}/src/sockettcp.cpp
+	${PROJECT_SOURCE_DIR}/src/socketudp.cpp
+)
+set(HEADERS
+	${PROJECT_SOURCE_DIR}/src/socket.hpp
+	${PROJECT_SOURCE_DIR}/src/sockettcp.hpp
+	${PROJECT_SOURCE_DIR}/src/socketudp.hpp
+	${PROJECT_SOURCE_DIR}/src/defines.hpp
+	${PROJECT_SOURCE_DIR}/src/enums.hpp
+	${PROJECT_SOURCE_DIR}/src/interface.hpp
+	${PROJECT_SOURCE_DIR}/src/types.hpp
+)
 
-link_directories ("${PROJECT_BINARY_DIR}/xsocket")
+set(CMAKE_BUILD_TYPE Debug)
 
-add_executable (socketeria main.cpp)
-target_link_libraries (socketeria xsocket)
-if(WIN32)
-  target_link_libraries(socketeria wsock32 ws2_32)
+if(SOCKETERIA_BUILD_EXAMPLE)
+	add_subdirectory(example)
 endif()
+
+add_library (xsocket STATIC ${SOURCES} ${HEADERS})
+if(WIN32)
+	target_link_libraries(xsocket wsock32 ws2_32)
+endif()
+
+
+
+

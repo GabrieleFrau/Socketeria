@@ -7,7 +7,7 @@ public:
     SocketUDP(string _ip, int _port, Family _family, bool _autobind = true);
     ~SocketUDP();
 
-    UDPsenderInfo*  Receive();
+    UDPsenderInfo  Receive();
     void            Send(string _buffer, addr_storage* _receiver);
 };
 #endif // SOCKETUDP_HPP_INCLUDED

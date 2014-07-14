@@ -3,7 +3,6 @@
 #include "interface.hpp"
 #include "defines.hpp"
 #include "types.hpp"
-#include "xplatform/platform.hpp"
 #include <vector>
 #include <cstdio>
 #include <cstring>
@@ -44,7 +43,7 @@ public:
                                         Family _family = Family::Unspecified);
 protected:
     void                    Create();
-#ifdef ISWINZ
+#ifdef _WIN32
     void                    InitWSA();
     bool m_isWsaStarted = false;
 #endif

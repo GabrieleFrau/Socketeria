@@ -1,1 +1,0 @@
-add_library (xplatform STATIC platform.cpp)
