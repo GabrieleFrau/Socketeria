@@ -6,5 +6,6 @@ int main(int argc, char* argv[])
 {
 	SocketUDP socket("localhost", 8080, Family::IPv4);
 	std::cout << socket.Receive().buffer << std::endl;
+	std::cin.get();
 	return 0;
 }

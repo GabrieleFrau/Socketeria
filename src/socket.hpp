@@ -4,6 +4,7 @@
 #include "defines.hpp"
 #include "types.hpp"
 #include <vector>
+#include <array>
 #include <cstdio>
 #include <cstring>
 #if defined(__unix__) || defined(__APPLE__)
@@ -23,7 +24,7 @@ public:
     Socket(string _ip, int _port, Type _type, Protocol _protocol, Family _family, bool _autobind = true);
     virtual ~Socket();
 
-    TCPsenderInfo*          Accept();
+    TCPSenderInfo			Accept();
     bool                    Bind(addr_IPvX* _addr);
     bool                    Bind(addr_IPvX* _addr, int _addrlen);
     void                    Close();
@@ -36,7 +37,7 @@ public:
     int                     GetPort(addr_IPv6* _address);
     virtual bool            IsBound();
     void                    ShutDown();
-    vector<sNPAddrInfo>     GetAddresses(string _ip,
+    vector<NPAddrInfo>     GetAddresses(string _ip,
                                         int _port,
                                         Type _type,
                                         Protocol _protocol,
@@ -49,7 +50,7 @@ protected:
 #endif
     SOCKET m_sockId = INVALID_SOCKET;
     bool m_isBound = false;
-    vector<sNPAddrInfo> m_addresses;
+    vector<NPAddrInfo> m_addresses;
     Family m_family = Family::Unspecified;
     Type m_type = Type::Stream;
     Protocol m_protocol = Protocol::TCP;

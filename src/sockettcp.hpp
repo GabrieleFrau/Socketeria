@@ -7,7 +7,7 @@ public:
     SocketTCP(string _ip, int _port, Family _family, bool _autobind = true);
     ~SocketTCP();
 
-    TCPsenderInfo*          Accept();
+    TCPSenderInfo			Accept();
     SOCKET                  Connect(addr_IPvX* _addr, socklen_t _addrlen);
     void                    Listen();
     string                  Receive(SOCKET _sockID);

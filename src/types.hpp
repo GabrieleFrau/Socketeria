@@ -8,6 +8,7 @@
 #ifdef _WIN32
 typedef int socklen_t;
 typedef int in_port_t;
+typedef int ssize_t;
 #endif
 typedef struct sockaddr_in addr_IPv4;
 typedef struct sockaddr_in6 addr_IPv6;
@@ -15,23 +16,25 @@ typedef struct sockaddr_storage addr_storage;
 typedef struct sockaddr addr_IPvX;
 typedef struct addrinfo addr_info;
 
-typedef struct sUDPSenderInfo
-{
-    addr_storage* sender;
-    std::string buffer;
-}UDPsenderInfo;
-typedef struct sTCPSenderInfo
-{
-    addr_storage* sender;
-    socklen_t senderlen;
-    SOCKET id;
-}TCPsenderInfo;
-
-class sNPAddrInfo
+class UDPSenderInfo
 {
 public:
-	sNPAddrInfo() = delete;
-	sNPAddrInfo(addr_info* info)
+    addr_storage sender;
+    std::string buffer;
+};
+class TCPSenderInfo
+{
+public:
+    addr_storage sender;
+    socklen_t senderlen;
+    SOCKET id;
+};
+
+class NPAddrInfo
+{
+public:
+	NPAddrInfo() = delete;
+	NPAddrInfo(addr_info* info)
 	{
 		ai_flags = info->ai_flags;
 		ai_family = info->ai_family;
@@ -41,9 +44,10 @@ public:
 		ai_addr = *(info->ai_addr);
 		ai_canonname = _strdup(info->ai_canonname);
 	}
-	~sNPAddrInfo()
+	~NPAddrInfo()
 	{
-		free(ai_canonname);
+		if (ai_canonname != nullptr)
+			free(ai_canonname);
 	}
 	int ai_flags;
 	int ai_family;

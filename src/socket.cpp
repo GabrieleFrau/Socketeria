@@ -114,11 +114,11 @@ void Socket::Create()
         std::cerr<<"errore";
     #endif
 }
-vector<sNPAddrInfo> Socket::GetAddresses(string _ip, int _port, Type _type, Protocol _protocol, Family _family)
+vector<NPAddrInfo> Socket::GetAddresses(string _ip, int _port, Type _type, Protocol _protocol, Family _family)
 {
     addr_info myAddrSpecs;
     addr_info* myAddrInfo;
-    vector<sNPAddrInfo> ret;
+    vector<NPAddrInfo> ret;
     memset(&myAddrSpecs, 0, sizeof(myAddrSpecs));
     myAddrSpecs.ai_family = (int)_family;
     myAddrSpecs.ai_socktype = (int)_type;
@@ -161,7 +161,7 @@ vector<sNPAddrInfo> Socket::GetAddresses(string _ip, int _port, Type _type, Prot
         ret.clear();
 		for (size_t i = 0; next != NULL; ++i, next = next->ai_next)
 		{
-			ret.emplace_back(sNPAddrInfo(next));
+			ret.emplace_back(NPAddrInfo(next));
 		}
     }
     freeaddrinfo(myAddrInfo);

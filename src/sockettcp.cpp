@@ -7,12 +7,12 @@ SocketTCP::~SocketTCP()
 {
 
 }
-TCPsenderInfo* SocketTCP::Accept()
+TCPSenderInfo SocketTCP::Accept()
 {
-    TCPsenderInfo* ret = new sTCPSenderInfo;
-    ret->senderlen = (socklen_t)sizeof(addr_storage);
-    ret->id = accept(m_sockId,(addr_IPvX*)ret->sender,&ret->senderlen);
-    if(ret->id == SOCKET_ERROR)
+    TCPSenderInfo ret;
+    ret.senderlen = (socklen_t)sizeof(addr_storage);
+    ret.id = accept(m_sockId,(addr_IPvX*)&ret.sender,&ret.senderlen);
+    if(ret.id == SOCKET_ERROR)
 #if defined(__unix__) || defined(__APPLE__)
             throw strerror(errno);
 #endif
@@ -79,15 +79,7 @@ string SocketTCP::Receive(SOCKET _sockID)
 }
 void SocketTCP::Send(SOCKET _sockID, string _buffer)
 {
-    const char* buffer = _buffer.c_str();
-    size_t bufferlen = _buffer.length();
-#if defined(__unix__) || defined(__APPLE__)
-    ssize_t n;
-#endif
-#ifdef _WIN32
-    int n;
-#endif
-    n = send(_sockID,buffer,bufferlen, 0);
+    ssize_t n = send(_sockID, _buffer.c_str(),_buffer.length(), 0);
     if(n == SOCKET_ERROR)
     {
 #if defined(__unix__) || defined(__APPLE__)

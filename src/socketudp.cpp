@@ -8,49 +8,38 @@ SocketUDP::~SocketUDP()
 {
 
 }
-UDPsenderInfo SocketUDP::Receive()
+UDPSenderInfo SocketUDP::Receive()
 {
     if(!m_isBound)
         throw "Socket not bound!";
-    char buffer[BUFFER_SIZE];
-    memset(buffer,'\0',BUFFER_SIZE);
-    UDPsenderInfo ret;
-    ret.sender = new sockaddr_storage();
-	if (ret.sender != NULL)
+	std::array<char, BUFFER_SIZE> buffer;
+	for (char& c : buffer)
+		c = '\0';
+    UDPSenderInfo ret;
+	int n;
+	clog << "Awaiting data" << endl;
+	socklen_t senderlen = sizeof(ret.sender);
+	n = recvfrom(m_sockId, buffer.data(), BUFFER_PACKET_MAX_SIZE, 0, (addr_IPvX*)&ret.sender, &senderlen);
+	if (n == SOCKET_ERROR)
 	{
-		int n;
-		clog << "Awaiting data" << endl;
-		socklen_t senderlen = (ret.sender->ss_family == AF_INET) ? sizeof(addr_IPv4) : sizeof(addr_IPv6);
-		n = recvfrom(m_sockId, buffer, BUFFER_PACKET_MAX_SIZE, 0, (addr_IPvX*)ret.sender, &senderlen);
-		if (n == SOCKET_ERROR)
-		{
-#ifdef ISUNIX
-			throw strerror(errno);
+#ifdef __unix__
+		throw strerror(errno);
 #endif
 #ifdef _WIN32
-			std::cerr << "errore";
+		std::cerr << "errore";
 #endif
-		}
-		else
-		{
-			clog << "Data received" << endl;
-			ret.buffer.assign(buffer);
-		}
+	}
+	else
+	{
+		clog << "Data received" << endl;
+		ret.buffer.assign(buffer.data());
 	}
     return ret;
 }
 void SocketUDP::Send(string _buffer, addr_storage* _receiver)
 {
-    const char* buffer = _buffer.c_str();
-    size_t bufferlen = _buffer.length() + 1;
     socklen_t recvlen = sizeof(addr_storage);
-#if defined(__unix__) || defined(__APPLE__)
-    ssize_t n;
-#endif
-#ifdef _WIN32
-    int n;
-#endif
-    n = sendto(m_sockId, buffer,bufferlen,0,(addr_IPvX*)_receiver,recvlen);
+	ssize_t n = sendto(m_sockId, _buffer.c_str(), _buffer.length() + 1, 0, (addr_IPvX*)_receiver, recvlen);
     if(n == SOCKET_ERROR)
     {
 #if defined(__unix__) || defined(__APPLE__)
