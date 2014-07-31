@@ -174,26 +174,18 @@ bool Socket::IsBound()
 string Socket::GetIP(addr_IPvX* _address)
 {
     long unsigned int length = (_address->sa_family == AF_INET) ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN;
-#ifdef __GNUC__
-    char ip[(int)length];
-#endif
-#ifdef _MSC_VER
-	char ip[INET_ADDRSTRLEN]; //can only use constant expression (lame) NEEDS A WORKAROUND
-#endif
+    std::vector<char> ip(length);
 #if defined(__unix__) || defined(__APPLE__)
-    inet_ntop(_address->sa_family,_address->sa_data,ip,length);
+    inet_ntop(_address->sa_family,_address->sa_data,ip.data(),length);
 #endif
 #ifdef _WIN32
-	if (WSAAddressToString(_address, length, NULL, ip, &length) == SOCKET_ERROR)
+	if (WSAAddressToString(_address, length, NULL, ip.data(), &length) == SOCKET_ERROR)
 		cerr << "Address to string: ";// << Platform::ShowError(WSAGetLastError()) << ::endl;
 #endif
-    if(ip == NULL)
-    {
-		char tmp[256];
-        cerr<<"inet_ntop: "<<strerror_s(tmp,errno)<<::endl;
-        exit(errno);
-    }
-    return string(ip);
+	char tmp[256];
+    cerr<<"inet_ntop: "<<strerror_s(tmp,errno)<<::endl;
+    exit(errno);
+    return string(ip.data());
 }
 string Socket::GetIP(addr_IPv4* _address)
 {
