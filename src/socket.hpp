@@ -1,5 +1,5 @@
-#ifndef XSOCKET_SOCKET_HPP_INCLUDED
-#define XSOCKET_SOCKET_HPP_INCLUDED
+#ifndef SOCKET_HPP_INCLUDED
+#define SOCKET_HPP_INCLUDED
 #include "interface.hpp"
 #include "defines.hpp"
 #include "types.hpp"
@@ -24,8 +24,8 @@ public:
     virtual ~Socket();
 
     TCPsenderInfo*          Accept();
-    void                    Bind(addr_IPvX* _addr);
-    void                    Bind(addr_IPvX* _addr, int _addrlen);
+    bool                    Bind(addr_IPvX* _addr);
+    bool                    Bind(addr_IPvX* _addr, int _addrlen);
     void                    Close();
     void                    Create(Family _family, Type _type);
     string                  GetIP(addr_IPvX* _address);
@@ -36,7 +36,7 @@ public:
     int                     GetPort(addr_IPv6* _address);
     virtual bool            IsBound();
     void                    ShutDown();
-    vector<npAddrInfo>      GetAddresses(string _ip,
+    vector<sNPAddrInfo>     GetAddresses(string _ip,
                                         int _port,
                                         Type _type,
                                         Protocol _protocol,
@@ -49,7 +49,7 @@ protected:
 #endif
     SOCKET m_sockId = INVALID_SOCKET;
     bool m_isBound = false;
-    vector<npAddrInfo> m_addresses;
+    vector<sNPAddrInfo> m_addresses;
     Family m_family = Family::Unspecified;
     Type m_type = Type::Stream;
     Protocol m_protocol = Protocol::TCP;

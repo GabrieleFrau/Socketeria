@@ -28,10 +28,7 @@ Socket::Socket(string _ip, int _port,Type _type, Protocol _protocol, Family _fam
     if(_autobind)
     {
         m_addresses = GetAddresses(_ip,_port,_type,_protocol,_family);
-        for(size_t i = 0; i < m_addresses.size() && !IsBound(); i++)
-        {
-            Bind(m_addresses[i].ai_addr,m_addresses[i].ai_addrlen);
-        }
+		for (size_t i = 0; i < m_addresses.size() && !Bind(&m_addresses[i].ai_addr, m_addresses[i].ai_addrlen); i++);
     }
 }
 Socket::~Socket()
@@ -47,11 +44,11 @@ Socket::~Socket()
 #endif
     Close();
 }
-void Socket::Bind(addr_IPvX* _addr)
+bool Socket::Bind(addr_IPvX* _addr)
 {
-    return this->Bind(_addr,(_addr->sa_family == AF_INET)?INET_ADDRSTRLEN:INET6_ADDRSTRLEN);
+	return this->Bind(_addr, (_addr->sa_family == AF_INET) ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN);
 }
-void Socket::Bind(addr_IPvX* _addr,int _addrlen)
+bool Socket::Bind(addr_IPvX* _addr,int _addrlen)
 {
     if(m_sockId == INVALID_SOCKET)
         throw "Socket is not valid";
@@ -66,15 +63,13 @@ void Socket::Bind(addr_IPvX* _addr,int _addrlen)
 #if defined(__unix__) || defined(__APPLE__)
             throw strerror(errno);
 #endif
-            m_isBound = false;
+            return m_isBound = false;
         }
         else
-        {
-            m_isBound = true;
-			//clog << "Socket bound to " << GetIP(_addr) << " " << GetPort(_addr) << endl;
-        }
+            return m_isBound = true;
 #endif
-#ifdef __APPLE__
+		//TODO
+#ifdef __APPLE__ 
 		bind(m_sockId, _addr, _addrlen);
 #endif
     }
@@ -119,11 +114,11 @@ void Socket::Create()
         std::cerr<<"errore";
     #endif
 }
-vector<npAddrInfo> Socket::GetAddresses(string _ip, int _port, Type _type, Protocol _protocol, Family _family)
+vector<sNPAddrInfo> Socket::GetAddresses(string _ip, int _port, Type _type, Protocol _protocol, Family _family)
 {
     addr_info myAddrSpecs;
     addr_info* myAddrInfo;
-    vector<npAddrInfo> ret;
+    vector<sNPAddrInfo> ret;
     memset(&myAddrSpecs, 0, sizeof(myAddrSpecs));
     myAddrSpecs.ai_family = (int)_family;
     myAddrSpecs.ai_socktype = (int)_type;
@@ -164,19 +159,12 @@ vector<npAddrInfo> Socket::GetAddresses(string _ip, int _port, Type _type, Proto
     {
         addr_info* next = myAddrInfo;
         ret.clear();
-        for(size_t i = 0 ;next != NULL;++i,next = next->ai_next)
-        {
-            ret.push_back(sNPAddrInfo());
-            ret[i].ai_flags = next->ai_flags;
-            ret[i].ai_family = next->ai_family;
-            ret[i].ai_socktype = next->ai_socktype;
-            ret[i].ai_protocol = next->ai_protocol;
-            ret[i].ai_addrlen = next->ai_addrlen;
-            ret[i].ai_canonname = next->ai_canonname;
-            ret[i].ai_addr = next->ai_addr;
-        }
+		for (size_t i = 0; next != NULL; ++i, next = next->ai_next)
+		{
+			ret.emplace_back(sNPAddrInfo(next));
+		}
     }
-    //freeaddrinfo(myAddrInfo);
+    freeaddrinfo(myAddrInfo);
     return ret;
 }
 bool Socket::IsBound()
