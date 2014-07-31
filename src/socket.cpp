@@ -182,9 +182,6 @@ string Socket::GetIP(addr_IPvX* _address)
 	if (WSAAddressToString(_address, length, NULL, ip.data(), &length) == SOCKET_ERROR)
 		cerr << "Address to string: ";// << Platform::ShowError(WSAGetLastError()) << ::endl;
 #endif
-	char tmp[256];
-    cerr<<"inet_ntop: "<<strerror_s(tmp,errno)<<::endl;
-    exit(errno);
     return string(ip.data());
 }
 string Socket::GetIP(addr_IPv4* _address)
