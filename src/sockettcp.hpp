@@ -4,13 +4,13 @@
 class SocketTCP : public Socket
 {
 public:
-    SocketTCP(string _ip, int _port, Family _family, bool _autobind = true);
+    SocketTCP(std::string _ip, int _port, Family _family, bool _autobind);
     ~SocketTCP();
 
     TCPSenderInfo			Accept();
     SOCKET                  Connect(addr_IPvX* _addr, socklen_t _addrlen);
     void                    Listen();
-    string                  Receive(SOCKET _sockID);
-    void                    Send(SOCKET _sockID, string _buffer);
+    std::string             Receive(SOCKET _sockID);
+    void                    Send(SOCKET _sockID, std::string _buffer);
 };
 #endif

@@ -1,5 +1,5 @@
 #include "sockettcp.hpp"
-SocketTCP::SocketTCP(string _ip, int _port, Family _family, bool _autobind)
+SocketTCP::SocketTCP(std::string _ip, int _port, Family _family, bool _autobind = true)
     : Socket(_ip, _port, Type::Stream, Protocol::TCP, _family , _autobind)
 {
 }
@@ -10,34 +10,19 @@ SocketTCP::~SocketTCP()
 TCPSenderInfo SocketTCP::Accept()
 {
     TCPSenderInfo ret;
-    ret.senderlen = (socklen_t)sizeof(addr_storage);
+    ret.senderlen = (socklen_t)sizeof(ret.sender);
     ret.id = accept(m_sockId,(addr_IPvX*)&ret.sender,&ret.senderlen);
-    if(ret.id == SOCKET_ERROR)
-#if defined(__unix__) || defined(__APPLE__)
-            throw strerror(errno);
-#endif
-#ifdef _WIN32
-            std::cerr<<"errore";
-#endif
+	if (ret.id == SOCKET_ERROR)
+		throw strerror(errno);
     return ret;
 }
 SOCKET SocketTCP::Connect(addr_IPvX* _addr, socklen_t _addrlen)
 {
-    SOCKET so = socket((int)m_family,(int)m_type,0);
+	SOCKET so = socket(static_cast<int>(m_family), static_cast<int>(m_type), 0);
 	if (so == INVALID_SOCKET)
-	{
-		char tmp[256];
-		throw strerror_s(tmp,errno);
-	}
+		throw strerror(errno);
     if(connect(so, _addr , _addrlen))
-    {
-#ifdef ISUNIX
-            throw strerror(errno);
-#endif
-#ifdef _WIN32
-            std::cerr<<"errore";
-#endif
-    }
+        throw strerror(errno);
     return so;
 }
 void SocketTCP::Listen()
@@ -46,47 +31,20 @@ void SocketTCP::Listen()
         throw "Invalid socket";
     if(!m_isBound)
         throw "Socket not bound";
-    if(listen(m_sockId,2) == SOCKET_ERROR)
-#ifdef _WIN32
-        std::cerr<<"errore";
-#endif
-#if defined(__unix__) || defined(__APPLE__)
+	if (listen(m_sockId, 2) == SOCKET_ERROR)
         throw strerror(errno);
-#endif
 }
-string SocketTCP::Receive(SOCKET _sockID)
+std::string SocketTCP::Receive(SOCKET _sockID)
 {
     if(!m_isBound)
         throw "Socket not bound!";
-    char buffer[BUFFER_SIZE];
-    memset(buffer,'\0',BUFFER_SIZE);
-    int n;
-    n = recv(_sockID, buffer, BUFFER_PACKET_MAX_SIZE, 0);
-    if(n == SOCKET_ERROR)
-    {
-#if defined(__unix__) || defined(__APPLE__)
+	std::array<char, BUFFER_SIZE> buffer = { '\0' };
+    if(recv(_sockID, buffer.data(), BUFFER_PACKET_MAX_SIZE, 0) == SOCKET_ERROR)
         throw strerror(errno);
-#endif
-#ifdef _WIN32
-        std::cerr<<"errore";
-#endif
-    }
-    else
-    {
-        clog<<"Data received"<<endl;
-    }
-    return buffer;
+    return buffer.data();
 }
-void SocketTCP::Send(SOCKET _sockID, string _buffer)
+void SocketTCP::Send(SOCKET _sockID, std::string _buffer)
 {
-    ssize_t n = send(_sockID, _buffer.c_str(),_buffer.length(), 0);
-    if(n == SOCKET_ERROR)
-    {
-#if defined(__unix__) || defined(__APPLE__)
+    if(send(_sockID, _buffer.c_str(),_buffer.length(), 0) == SOCKET_ERROR)
         throw strerror(errno);
-#endif
-#ifdef _WIN32
-        std::cerr<<"errore";
-#endif
-    }
 }

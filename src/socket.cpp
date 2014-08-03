@@ -23,12 +23,14 @@ Socket::Socket(addr_IPv6* _address, Type _type, Protocol _protocol)
     : Socket((addr_IPvX*)_address,_address->sin6_port,_type,_protocol)
 {
 }
-Socket::Socket(string _ip, int _port,Type _type, Protocol _protocol, Family _family, bool _autobind) : Socket(_family,_type,_protocol)
+Socket::Socket(std::string _ip, int _port,Type _type, Protocol _protocol, Family _family, bool _autobind = true) : Socket(_family,_type,_protocol)
 {
     if(_autobind)
     {
         m_addresses = GetAddresses(_ip,_port,_type,_protocol,_family);
-		for (size_t i = 0; i < m_addresses.size() && !Bind(&m_addresses[i].ai_addr, m_addresses[i].ai_addrlen); i++);
+		for (auto& address : m_addresses)
+			if (Bind(&address.ai_addr, address.ai_addrlen))
+				break;
     }
 }
 Socket::~Socket()
@@ -46,7 +48,7 @@ Socket::~Socket()
 }
 bool Socket::Bind(addr_IPvX* _addr)
 {
-	return this->Bind(_addr, (_addr->sa_family == AF_INET) ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN);
+	return Bind(_addr, (_addr->sa_family == AF_INET) ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN);
 }
 bool Socket::Bind(addr_IPvX* _addr,int _addrlen)
 {
@@ -54,24 +56,13 @@ bool Socket::Bind(addr_IPvX* _addr,int _addrlen)
         throw "Socket is not valid";
     else
     {
-#if defined(_WIN32) || defined(__unix__)
         if(bind(m_sockId,_addr,_addrlen) == SOCKET_ERROR)
         {
-#ifdef _WIN32
-            std::cerr<<"errore";
-#endif
-#if defined(__unix__) || defined(__APPLE__)
             throw strerror(errno);
-#endif
             return m_isBound = false;
         }
         else
             return m_isBound = true;
-#endif
-		//TODO
-#ifdef __APPLE__ 
-		bind(m_sockId, _addr, _addrlen);
-#endif
     }
 }
 void Socket::Close()
@@ -93,55 +84,37 @@ void Socket::Create(Family _family, Type _type)
 void Socket::Create()
 {
     //WSASocket(_family,m_type,_protocol,NULL,0,WSA_FLAG_OVERLAPPED);
-    m_sockId = socket((int)m_family,(int)m_type, 0);
+    m_sockId = socket(static_cast<int>(m_family),static_cast<int>(m_type), 0);
     if(m_sockId == INVALID_SOCKET)
-    {
-#ifdef _WIN32
-        std::cerr<<"errore";
-#endif
-#if defined(__unix__) || defined(__APPLE__)
         throw strerror(errno);
-#endif
-    }
     #ifdef __unix__
     int optval = 1;
-    if(setsockopt(m_sockId, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)))
-        throw strerror(errno);
-    #endif
-    #ifdef _WIN32
+	int* tooptval = &optval;
+	#endif
+	#ifdef _WIN32
     const char* optval = "true";
-    if(setsockopt(m_sockId, SOL_SOCKET, SO_REUSEADDR, optval, sizeof(optval)))
-        std::cerr<<"errore";
     #endif
+    if(setsockopt(m_sockId, SOL_SOCKET, SO_REUSEADDR, optval, sizeof(optval)))
+        throw strerror(errno); 
 }
-vector<NPAddrInfo> Socket::GetAddresses(string _ip, int _port, Type _type, Protocol _protocol, Family _family)
+std::vector<NPAddrInfo> Socket::GetAddresses(std::string _ip, int _port, Type _type, Protocol _protocol, Family _family)
 {
     addr_info myAddrSpecs;
     addr_info* myAddrInfo;
-    vector<NPAddrInfo> ret;
+    std::vector<NPAddrInfo> ret;
     memset(&myAddrSpecs, 0, sizeof(myAddrSpecs));
-    myAddrSpecs.ai_family = (int)_family;
-    myAddrSpecs.ai_socktype = (int)_type;
+    myAddrSpecs.ai_family = static_cast<int>(_family);
+    myAddrSpecs.ai_socktype = static_cast<int>(_type);
     #if defined(__unix__) || defined(__APPLE__)
     myAddrSpecs.ai_flags = AI_V4MAPPED | AI_ADDRCONFIG;
     #endif
     if(_ip.empty())
         myAddrSpecs.ai_flags |= AI_PASSIVE;
-    myAddrSpecs.ai_protocol = (int)_protocol;
-#if defined(__unix__) || defined(__APPLE__)
-    const char* port = ::to_string(_port).c_str();
-#endif
-#ifdef _WIN32
-	#ifdef __MINGW32__
-		const char* port = Platform::to_string(_port).c_str();
-	#elif defined(_MSC_VER)
-		char port[20] = { '\0' };
-		_itoa_s(_port, port, 10);
-	#endif
-#endif
+    myAddrSpecs.ai_protocol = static_cast<int>(_protocol);
+    const char* port = std::to_string(_port).c_str();
     const char* ip = (_ip.empty())
-                        ?   ((char*)nullptr)    //if
-                        :   (_ip.c_str());      //else
+                        ?   ((char*)nullptr)
+                        :   (_ip.c_str());
     int n = getaddrinfo(ip, port , &myAddrSpecs, &myAddrInfo);
 #if defined(__unix__) || defined(__APPLE__)
     if(n < 0)
@@ -151,9 +124,6 @@ vector<NPAddrInfo> Socket::GetAddresses(string _ip, int _port, Type _type, Proto
 #endif
     {
         throw gai_strerror(n);
-        #ifdef _WIN32
-        std::cerr<<"errore";
-        #endif
     }
     else
     {
@@ -171,7 +141,7 @@ bool Socket::IsBound()
 {
     return m_isBound;
 }
-string Socket::GetIP(addr_IPvX* _address)
+std::string Socket::GetIP(addr_IPvX* _address)
 {
     long unsigned int length = (_address->sa_family == AF_INET) ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN;
     std::vector<char> ip(length);
@@ -180,23 +150,27 @@ string Socket::GetIP(addr_IPvX* _address)
 #endif
 #ifdef _WIN32
 	if (WSAAddressToString(_address, length, NULL, ip.data(), &length) == SOCKET_ERROR)
-		cerr << "Address to string: ";// << Platform::ShowError(WSAGetLastError()) << ::endl;
+	{
+		char tmp[256];
+		strerror_s(tmp, errno);
+		throw tmp;
+	}
 #endif
-    return string(ip.data());
+    return std::string(ip.data());
 }
-string Socket::GetIP(addr_IPv4* _address)
+std::string Socket::GetIP(addr_IPv4* _address)
 {
     return GetIP((addr_IPvX*)_address);
 }
-string Socket::GetIP(addr_IPv6* _address)
+std::string Socket::GetIP(addr_IPv6* _address)
 {
     return GetIP((addr_IPvX*)_address);
 }
 int Socket::GetPort(addr_IPvX* _address)
 {
-    return (_address->sa_family == AF_INET)
-            ?GetPort((addr_IPv4*)_address)
-            :GetPort((addr_IPv6*)_address);
+	return (_address->sa_family == AF_INET)
+		? GetPort((addr_IPv4*)_address)
+		: GetPort((addr_IPv6*)_address);
 }
 int Socket::GetPort(addr_IPv4* _address)
 {
@@ -210,19 +184,18 @@ void Socket::ShutDown()
 {
         if(m_sockId != INVALID_SOCKET)
         {
-            if(shutdown(m_sockId,2) == -1)
-            {
+			if (shutdown(m_sockId, 2) == SOCKET_ERROR)
+			{
 #ifdef _WIN32
-                clog<<"shutdown: "<<WSAGetLastError()<<endl;
-                if(closesocket(m_sockId) == SOCKET_ERROR)
-                    throw WSAGetLastError();
+				throw strerror(errno);
+				if (closesocket(m_sockId) == SOCKET_ERROR)
 #endif
 #if defined(__unix__) || defined(__APPLE__)
-                clog<<"shutdown: "<<strerror(errno)<<endl;
-                if(close(m_sockId))
-                    throw strerror(errno);
+				if (close(m_sockId))
+
 #endif
-            }
+						throw strerror(errno);
+			}
         }
 }
 #ifdef _WIN32
@@ -230,11 +203,11 @@ void Socket::InitWSA()
 {
     WORD wVersionRequested = MAKEWORD(2,2);
     WSADATA wsaData;
-    int wsastartup = WSAStartup(wVersionRequested, &wsaData);
-	if (wsastartup != NO_ERROR)
+	if (WSAStartup(wVersionRequested, &wsaData) != NO_ERROR)
 	{
 		char tmp[256];
-		throw strerror_s(tmp,errno);
+		strerror_s(tmp,errno);
+		throw tmp;
 	}
     else m_isWsaStarted = true;
 }

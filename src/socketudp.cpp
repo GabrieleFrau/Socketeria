@@ -1,5 +1,5 @@
 #include "socketudp.hpp"
-SocketUDP::SocketUDP(string _ip, int _port, Family _family, bool _autobind)
+SocketUDP::SocketUDP(std::string _ip, int _port, Family _family, bool _autobind = true)
     : Socket(_ip, _port, Type::Datagram, Protocol::UDP, _family, _autobind)
 {
 
@@ -12,41 +12,17 @@ UDPSenderInfo SocketUDP::Receive()
 {
     if(!m_isBound)
         throw "Socket not bound!";
-	std::array<char, BUFFER_SIZE> buffer;
-	for (char& c : buffer)
-		c = '\0';
+	std::array<char, BUFFER_SIZE> buffer = { '\0' };
     UDPSenderInfo ret;
-	int n;
-	clog << "Awaiting data" << endl;
 	socklen_t senderlen = sizeof(ret.sender);
-	n = recvfrom(m_sockId, buffer.data(), BUFFER_PACKET_MAX_SIZE, 0, (addr_IPvX*)&ret.sender, &senderlen);
-	if (n == SOCKET_ERROR)
-	{
-#ifdef __unix__
+	if (recvfrom(m_sockId, buffer.data(), BUFFER_PACKET_MAX_SIZE, 0, (addr_IPvX*)&ret.sender, &senderlen) == SOCKET_ERROR)
 		throw strerror(errno);
-#endif
-#ifdef _WIN32
-		std::cerr << "errore";
-#endif
-	}
 	else
-	{
-		clog << "Data received" << endl;
 		ret.buffer.assign(buffer.data());
-	}
     return ret;
 }
-void SocketUDP::Send(string _buffer, addr_storage* _receiver)
+void SocketUDP::Send(std::string _buffer, addr_storage* _receiver)
 {
-    socklen_t recvlen = sizeof(addr_storage);
-	ssize_t n = sendto(m_sockId, _buffer.c_str(), _buffer.length() + 1, 0, (addr_IPvX*)_receiver, recvlen);
-    if(n == SOCKET_ERROR)
-    {
-#if defined(__unix__) || defined(__APPLE__)
+    if(sendto(m_sockId, _buffer.c_str(), _buffer.length() + 1, 0, (addr_IPvX*)_receiver, sizeof(addr_storage)) == SOCKET_ERROR)
         throw strerror(errno);
-#endif
-#ifdef _WIN32
-        std::cerr<<"errore";
-#endif
-    }
 }

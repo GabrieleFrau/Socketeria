@@ -25,6 +25,7 @@ public:
 class TCPSenderInfo
 {
 public:
+	TCPSenderInfo() : senderlen(0), id(0) {}
     addr_storage sender;
     socklen_t senderlen;
     SOCKET id;
