@@ -8,10 +8,6 @@ find_package(Doxygen)
 
 if (DOXYGEN_FOUND AND SOCKETERIA_BUILD_DOCS)
 	add_subdirectory(docs)
-	configure_file(
-	"${PROJECT_SOURCE_DIR}/docs/Doxyfile.in"
-    "${PROJECT_BINARY_DIR}/docs/Doxyfile" @ONLY
-)
 endif()
 
 include_directories("${PROJECT_SOURCE_DIR}/src")
