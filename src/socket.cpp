@@ -170,7 +170,6 @@ void Socket::ShutDown()
 #endif
 #if defined(__unix__) || defined(__APPLE__)
 				if (close(m_sockId))
-
 #endif
 						throw strerror(errno);
 			}

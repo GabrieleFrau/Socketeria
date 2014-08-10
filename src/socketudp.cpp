@@ -9,10 +9,6 @@ SocketUDP::SocketUDP(std::string _ip, int _port, Family _family, bool _autobind)
 {
 
 }
-SocketUDP::~SocketUDP()
-{
-
-}
 UDPSenderInfo SocketUDP::Receive()
 {
     if(!m_isBound)

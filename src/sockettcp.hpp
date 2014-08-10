@@ -6,7 +6,7 @@ class SocketTCP : public Socket
 public:
 	SocketTCP(int _port, Family _family = Family::IPv4, bool _autobind = true);
     SocketTCP(std::string _ip, int _port, Family _family = Family::IPv4, bool _autobind = true);
-    ~SocketTCP();
+    ~SocketTCP()= default;
 
     TCPSenderInfo			Accept();
     SOCKET                  Connect(addr_IPvX& _addr, socklen_t _addrlen);
