@@ -5,14 +5,39 @@
 
 int main(int argc, char* argv[])
 {
-	SocketTCP socket("localhost", 8080, Family::IPv4);
-	socket.Listen();
-	SOCKET sender = socket.Accept().id;
-	std::cout << socket.Receive(sender) << std::endl;
-	socket.Close();
-	SocketUDP socket2("localhost", 8081, Family::IPv4);
-	std::cout << socket2.Receive().buffer << std::endl;
-	socket2.Close();
+	/*
+	try
+	{
+		SocketTCP socket(8084);
+		socket.Listen();
+		TCPSenderInfo sender = socket.Accept();
+		std::cout << socket.Receive(sender.id) << std::endl;
+		socket.Send(sender.id, "Sup?");
+		socket.Close();
+	}
+	/**/
+	try
+	{
+		SocketUDP socket2(10009);
+		UDPSenderInfo sender = socket2.Receive();
+		std::cout << sender.buffer << std::endl;
+		socket2.Send("sup?", sender.sender);
+		socket2.Close();
+	}
+	/**/
+	catch (std::exception &e)
+	{
+		std::cerr << e.what();
+	}
+	catch (const char* e)
+	{
+		std::cerr << e;
+	}
+	catch (int& e)
+	{
+		std::cerr << e;
+	}
+	/**/
 	std::cin.get();
 	return 0;
 }

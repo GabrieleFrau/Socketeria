@@ -4,10 +4,11 @@
 class SocketUDP : public Socket
 {
 public:
-    SocketUDP(std::string _ip, int _port, Family _family, bool _autobind);
+	SocketUDP(int _port, Family _family = Family::IPv4, bool _autobind = true);
+    SocketUDP(std::string _ip, int _port, Family _family = Family::IPv4, bool _autobind = true);
     ~SocketUDP();
 
     UDPSenderInfo	Receive();
-    void            Send(std::string _buffer, addr_storage* _receiver);
+    void            Send(std::string _buffer, addr_storage& _receiver);
 };
 #endif // SOCKETUDP_HPP_INCLUDED
