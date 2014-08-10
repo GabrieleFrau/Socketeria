@@ -21,9 +21,7 @@ set(HEADERS
 	${PROJECT_SOURCE_DIR}/src/socket.hpp
 	${PROJECT_SOURCE_DIR}/src/sockettcp.hpp
 	${PROJECT_SOURCE_DIR}/src/socketudp.hpp
-	${PROJECT_SOURCE_DIR}/src/defines.hpp
 	${PROJECT_SOURCE_DIR}/src/enums.hpp
-	${PROJECT_SOURCE_DIR}/src/interface.hpp
 	${PROJECT_SOURCE_DIR}/src/types.hpp
 )
 

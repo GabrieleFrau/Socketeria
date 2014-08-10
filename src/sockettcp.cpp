@@ -42,8 +42,8 @@ std::string SocketTCP::Receive(SOCKET _sockID)
 {
     if(!m_isBound)
         throw "Socket not bound!";
-	std::array<char, BUFFER_SIZE> buffer = { '\0' };
-    if(recv(_sockID, buffer.data(), BUFFER_PACKET_MAX_SIZE, 0) == SOCKET_ERROR)
+	std::vector<char> buffer(m_bufferSize, '\0');
+    if(recv(_sockID, buffer.data(), buffer.size(), 0) == SOCKET_ERROR)
         throw strerror(errno);
     return buffer.data();
 }

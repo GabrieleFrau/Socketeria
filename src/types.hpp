@@ -1,6 +1,5 @@
 #ifndef TYPES_HPP_INCLUDED
 #define TYPES_HPP_INCLUDED
-#include "defines.hpp"
 #include "enums.hpp"
 #include <memory>
 #include <vector>
@@ -54,7 +53,7 @@ public:
 	NPAddrInfo(addr_info& info)
 	{
 		ai_flags = info.ai_flags;
-		ai_family = static_cast<nAddress::Family>(info.ai_family);
+		ai_family = static_cast<Address::Family>(info.ai_family);
 		ai_socktype = static_cast<nSocket::Type>(info.ai_socktype);
 		ai_protocol = static_cast<nSocket::Protocol>(info.ai_protocol);
 		ai_addrlen = info.ai_addrlen;
@@ -62,10 +61,10 @@ public:
 		ai_canonname = info.ai_canonname != nullptr ? info.ai_canonname : "\0";
 	}
 	~NPAddrInfo() = default;
-	std::string ToString()
+	std::string				ToString()
 	{
 		std::string tmp;
-		tmp = ((ai_family != nAddress::Family::Unspecified) ? ((ai_family == nAddress::Family::IPv4) ? ("IPv4") : ("IPv6")) : ("Unspecified"));
+		tmp = ((ai_family != Address::Family::Unspecified) ? ((ai_family == Address::Family::IPv4) ? ("IPv4") : ("IPv6")) : ("Unspecified"));
 		tmp += " ";
 		tmp += ((ai_socktype == nSocket::Type::Datagram) ? ("Datagram") : ("Stream"));
 		tmp += " ";
@@ -113,8 +112,9 @@ public:
 	{
 		return htons(_address.sin6_port);
 	}
+
 	int ai_flags;
-	nAddress::Family ai_family;
+	Address::Family ai_family;
 	nSocket::Type ai_socktype;
 	nSocket::Protocol ai_protocol;
 	socklen_t ai_addrlen;

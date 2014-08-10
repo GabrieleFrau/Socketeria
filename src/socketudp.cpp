@@ -17,9 +17,9 @@ UDPSenderInfo SocketUDP::Receive()
 {
     if(!m_isBound)
         throw "Socket not bound!";
-	std::array<char, BUFFER_SIZE> buffer = { '\0' };
+	std::vector<char> buffer(m_bufferSize, '\0');
     UDPSenderInfo ret;
-	if (recvfrom(m_sockId, buffer.data(), BUFFER_PACKET_MAX_SIZE, 0, reinterpret_cast<addr_IPvX*>(&ret.sender), &ret.senderlen) == SOCKET_ERROR)
+	if (recvfrom(m_sockId, buffer.data(), buffer.size(), 0, reinterpret_cast<addr_IPvX*>(&ret.sender), &ret.senderlen) == SOCKET_ERROR)
 		throw WSAGetLastError();
 	else
 		ret.buffer.assign(buffer.data());

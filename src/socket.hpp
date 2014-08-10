@@ -1,7 +1,5 @@
 #ifndef SOCKET_HPP_INCLUDED
 #define SOCKET_HPP_INCLUDED
-#include "interface.hpp"
-#include "defines.hpp"
 #include "types.hpp"
 #include <vector>
 #include <array>
@@ -9,10 +7,9 @@
 #if defined(__unix__) || defined(__APPLE__)
 #include <unistd.h>
 #endif
+using namespace Address;
 using namespace nSocket;
-using namespace nAddress;
-
-class Socket : protected ISocket
+class Socket
 {
 public:
 	Socket() = delete;
@@ -32,7 +29,8 @@ public:
     void                    Close();
     void                    Create(Family _family, Type _type);
     bool					IsBound();
-    void                    ShutDown();    
+    void                    ShutDown();
+	void					SetBufferSize(size_t size);
 protected:
 	std::vector<NPAddrInfo> GetAddresses(const char* _ip,
                                         int _port,
@@ -44,6 +42,7 @@ protected:
     void                    InitWSA();
     bool					m_isWsaStarted;
 #endif
+	size_t					m_bufferSize;
     SOCKET					m_sockId;
     bool					m_isBound;
 	NPAddrInfo				m_address;

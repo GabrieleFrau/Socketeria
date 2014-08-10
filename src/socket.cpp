@@ -1,6 +1,8 @@
 #include "socket.hpp"
-
-Socket::Socket(Family _family, Type _type, Protocol _protocol)
+#if defined(_DEBUG) || defined(DEBUG)
+#include <iostream>
+#endif
+Socket::Socket(Family _family, Type _type, Protocol _protocol) : m_bufferSize(4096)
 {
     m_family = _family;
     m_type = _type;
