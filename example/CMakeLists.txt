@@ -1,2 +1,2 @@
-add_executable(example main.cpp)
-target_link_libraries(example xsocket)
+add_subdirectory(UDP)
+add_subdirectory(TCP)
