@@ -4,8 +4,8 @@
 class SocketUDP : public Socket
 {
 public:
-	SocketUDP(int _port, Family _family = Family::IPv4, bool _autobind = true);
-    SocketUDP(std::string _ip, int _port, Family _family = Family::IPv4, bool _autobind = true);
+	SocketUDP(in_port_t _port, Family _family = Family::IPv4, bool _autobind = true);
+    SocketUDP(std::string _ip, in_port_t _port, Family _family = Family::IPv4, bool _autobind = true);
     ~SocketUDP() = default;
 
     UDPSenderInfo	Receive();

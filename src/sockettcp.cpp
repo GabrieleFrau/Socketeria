@@ -1,10 +1,10 @@
 #include "sockettcp.hpp"
-SocketTCP::SocketTCP(int _port, Family _family, bool _autobind)
+SocketTCP::SocketTCP(in_port_t _port, Family _family, bool _autobind)
 	: Socket(_port, Type::Stream, Protocol::TCP, _family, _autobind)
 {
 
 }
-SocketTCP::SocketTCP(std::string _ip, int _port, Family _family, bool _autobind)
+SocketTCP::SocketTCP(std::string _ip, in_port_t _port, Family _family, bool _autobind)
     : Socket(_ip, _port, Type::Stream, Protocol::TCP, _family , _autobind)
 {
 }

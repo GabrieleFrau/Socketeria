@@ -27,7 +27,7 @@ Socket::Socket(addr_IPv6& _address, Type _type, Protocol _protocol)
 	: Socket(reinterpret_cast<addr_IPvX&>(_address), _address.sin6_port, _type, _protocol)
 {
 }
-Socket::Socket(int _port, Type _type, Protocol _protocol, Family _family, bool _autobind) : Socket(_family, _type, _protocol)
+Socket::Socket(in_port_t _port, Type _type, Protocol _protocol, Family _family, bool _autobind) : Socket(_family, _type, _protocol)
 {
 	if (_autobind)
 	{
@@ -43,7 +43,7 @@ Socket::Socket(int _port, Type _type, Protocol _protocol, Family _family, bool _
 			}
 	}
 }
-Socket::Socket(std::string _ip, int _port, Type _type, Protocol _protocol, Family _family, bool _autobind) : Socket(_family, _type, _protocol)
+Socket::Socket(std::string _ip, in_port_t _port, Type _type, Protocol _protocol, Family _family, bool _autobind) : Socket(_family, _type, _protocol)
 {
 	if (_autobind)
 	{

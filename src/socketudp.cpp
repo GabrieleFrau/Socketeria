@@ -1,10 +1,10 @@
 #include "socketudp.hpp"
-SocketUDP::SocketUDP(int _port, Family _family, bool _autobind)
+SocketUDP::SocketUDP(in_port_t _port, Family _family, bool _autobind)
 	: Socket(_port, Type::Datagram, Protocol::UDP, _family, _autobind)
 {
 
 }
-SocketUDP::SocketUDP(std::string _ip, int _port, Family _family, bool _autobind)
+SocketUDP::SocketUDP(std::string _ip, in_port_t _port, Family _family, bool _autobind)
     : Socket(_ip, _port, Type::Datagram, Protocol::UDP, _family, _autobind)
 {
 

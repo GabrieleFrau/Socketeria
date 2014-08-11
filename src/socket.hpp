@@ -19,8 +19,8 @@ public:
     Socket(addr_IPvX& _address, in_port_t _port, Type _type, Protocol _protocol);
     Socket(addr_IPv4& _address, Type _type, Protocol _protocol);
     Socket(addr_IPv6& _address, Type _type, Protocol _protocol);
-	Socket(int _port, Type _type, Protocol _protocol, Family _family, bool _autobind);
-    Socket(std::string _ip, int _port, Type _type, Protocol _protocol, Family _family, bool _autobind);
+	Socket(in_port_t _port, Type _type, Protocol _protocol, Family _family, bool _autobind);
+    Socket(std::string _ip, in_port_t _port, Type _type, Protocol _protocol, Family _family, bool _autobind);
     virtual ~Socket();
 
     TCPSenderInfo			Accept();
@@ -33,7 +33,7 @@ public:
 	void					SetBufferSize(size_t size);
 protected:
 	std::vector<NPAddrInfo> GetAddresses(const char* _ip,
-                                        int _port,
+                                        in_port_t _port,
                                         Type _type,
                                         Protocol _protocol,
                                         Family _family = Family::Unspecified);
