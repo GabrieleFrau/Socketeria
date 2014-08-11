@@ -27,6 +27,11 @@ set(HEADERS
 
 set(CMAKE_BUILD_TYPE Debug)
 
+if(MINGW OR CMAKE_COMPILER_IS_GNUCXX)
+	message(WARNING "You're using a compiler that does not have a complete c++11 implementation")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
+
 if(SOCKETERIA_BUILD_EXAMPLE)
 	add_subdirectory(example)
 endif()

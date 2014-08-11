@@ -4,7 +4,8 @@
 #include <memory>
 #include <vector>
 #if defined(__unix__) || defined(__APPLE__)
-#include <netdb.h>	// 
+#include <netdb.h>
+#include <cstring>
     typedef int SOCKET;
 #endif
 #ifdef _WIN32
@@ -34,7 +35,7 @@ public:
 class TCPSenderInfo
 {
 public:
-	TCPSenderInfo() 
+	TCPSenderInfo()
 		: senderlen(sizeof(addr_storage))
 		, id(0)
 	{
@@ -73,12 +74,12 @@ public:
 		tmp += GetIP(ai_addr);
 		return tmp;
 	}
-	static std::string      GetIP(addr_IPvX& _address)	
+	static std::string      GetIP(addr_IPvX& _address)
 	{
 		long unsigned int length = (_address.sa_family == AF_INET) ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN;
 		std::vector<char> ip(length);
 #if defined(__unix__) || defined(__APPLE__)
-		inet_ntop(_address->sa_family, _address->sa_data, ip.data(), length);
+		inet_ntop(_address.sa_family, _address.sa_data, ip.data(), length);
 #endif
 #ifdef _WIN32
 		if (WSAAddressToString(&_address, length, NULL, ip.data(), &length) == SOCKET_ERROR)
@@ -90,7 +91,7 @@ public:
 #endif
 		return std::string(ip.data());
 	}
-	static std::string      GetIP(addr_IPv4& _address)	
+	static std::string      GetIP(addr_IPv4& _address)
 	{
 		return GetIP(reinterpret_cast<addr_IPvX&>(_address));
 	}

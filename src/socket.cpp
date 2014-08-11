@@ -8,9 +8,9 @@ Socket::Socket(Family _family, Type _type, Protocol _protocol) : m_bufferSize(40
     m_type = _type;
     m_protocol = _protocol;
     m_isBound = false;
-	m_isWsaStarted = false;
 	m_sockId = INVALID_SOCKET;
 #ifdef _WIN32
+    m_isWsaStarted = false;
     InitWSA();
 #endif
     Create();
@@ -52,7 +52,9 @@ Socket::Socket(std::string _ip, in_port_t _port, Type _type, Protocol _protocol,
 			if (Bind(address.ai_addr, address.ai_addrlen))
 			{
 				m_address = address;
+				#if defined(_DEBUG) || defined (DEBUG)
 				std::clog << m_address.ToString() << std::endl;
+                #endif
 				break;
 			}
 	}
@@ -74,7 +76,7 @@ bool Socket::Bind(addr_IPvX& _addr)
 {
 	return Bind(_addr, (_addr.sa_family == AF_INET) ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN);
 }
-bool Socket::Bind(addr_IPvX& _addr,int _addrlen)
+bool Socket::Bind(addr_IPvX& _addr,socklen_t _addrlen)
 {
     if(m_sockId == INVALID_SOCKET)
         throw "Socket is not valid";
@@ -82,7 +84,7 @@ bool Socket::Bind(addr_IPvX& _addr,int _addrlen)
     {
 		if (bind(m_sockId, &_addr, _addrlen) == SOCKET_ERROR)
 		{
-			throw WSAGetLastError();
+			throw strerror(errno);
 			return m_isBound = false;
 		}
         else
@@ -119,9 +121,9 @@ void Socket::Create()
     const char* optval = "true";
     #endif
     if(setsockopt(m_sockId, SOL_SOCKET, SO_REUSEADDR, optval, sizeof(optval)))
-        throw strerror(errno); 
+        throw strerror(errno);
 }
-std::vector<NPAddrInfo> Socket::GetAddresses(const char *_ip, int _port, Type _type, Protocol _protocol, Family _family)
+std::vector<NPAddrInfo> Socket::GetAddresses(const char *_ip, in_port_t _port, Type _type, Protocol _protocol, Family _family)
 {
     addr_info myAddrSpecs;
     addr_info* myAddrInfo;
@@ -141,7 +143,7 @@ std::vector<NPAddrInfo> Socket::GetAddresses(const char *_ip, int _port, Type _t
     if(n != 0)
 #endif
     {
-		std::cerr << gai_strerror(n);
+		throw gai_strerror(n);
     }
     else
     {

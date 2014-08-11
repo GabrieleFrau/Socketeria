@@ -16,7 +16,7 @@ UDPSenderInfo SocketUDP::Receive()
 	std::vector<char> buffer(m_bufferSize, '\0');
     UDPSenderInfo ret;
 	if (recvfrom(m_sockId, buffer.data(), buffer.size(), 0, reinterpret_cast<addr_IPvX*>(&ret.sender), &ret.senderlen) == SOCKET_ERROR)
-		throw WSAGetLastError();
+		throw strerror(errno);
 	else
 		ret.buffer.assign(buffer.data());
     return ret;
