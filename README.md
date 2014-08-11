@@ -2,13 +2,17 @@ Socketeria
 ==========
 C++ crossplatform socket (tested on windows 8, GNU/linux and MacOSX 10.9)
 
+# Working features
+* Basic UDP (single-client <> server) connection (only blocking socket)
+* Basic TCP (single-client <> server) connection (only blocking socket)
+* IPv4 and IPv6 addresses are both supported (though getaddrinfo() capabilities are still not taken advantage of completely)
+
 # Dependencies
 * Any compiler that supports gnu++11/c++11 (Tested on GCC>=4.7, MinGW>=4.7, Clang and MSVC compiler v18)
 * CMAKE and MAKE for compiling (>=2.6)
 * Doxygen for creating the documentation (>=1.8.6)
 
 # Compiling
-
 ```bash
 mkdir build
 cd build/
@@ -19,5 +23,4 @@ make
 * Parse function for host names and service names
 * Comment everything catch(CommentsOverFlowException e){morecomments();}
 * Fix horrible error handling
-* Remove UN33X & W33nd4wZ H4XX if possible or wrap the functions as needed
 * Moar things
