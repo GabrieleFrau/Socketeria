@@ -1,4 +1,4 @@
-Socketeria[![Build Status](https://travis-ci.org/GabrieleFrau/Socketeria.svg?branch=master)](https://travis-ci.org/GabrieleFrau/Socketeria) (using gcc 4.8.1 and clang 3.4 on Ubuntu and OSX)
+Socketeria[![Build Status](https://travis-ci.org/GabrieleFrau/Socketeria.svg?branch=master)](https://travis-ci.org/GabrieleFrau/Socketeria)
 ==========
 
 C++ crossplatform socket (tested on windows 8, GNU/linux and MacOSX 10.9)
