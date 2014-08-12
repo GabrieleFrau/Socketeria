@@ -11,7 +11,7 @@ install:
   # g++4.8.2
   - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8"; fi
-  - if [ "$CXX" = "clang" ]; then sudo apt-get install -qq libc++-dev; fi
+  - if [ "$CXX" = "clang++" ]; then sudo apt-get install -qq libc++-dev; fi
 before_script:
   - mkdir build
   - cd build
