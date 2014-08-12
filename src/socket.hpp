@@ -4,8 +4,12 @@
 #include <vector>
 #include <array>
 #include <string>
+#if defined(_DEBUG) || defined(DEBUG)
+#include <iostream>
+#endif
 #if defined(__unix__) || defined(__APPLE__)
 #include <unistd.h>
+#include <errno.h>
 #endif
 using namespace Address;
 using namespace nSocket;

@@ -1,8 +1,8 @@
 #ifndef TYPES_HPP_INCLUDED
 #define TYPES_HPP_INCLUDED
 #include "enums.hpp"
-#include <memory>
 #include <vector>
+#include <string>
 #if defined(__unix__) || defined(__APPLE__)
 #include <netdb.h>
 #include <cstring>
